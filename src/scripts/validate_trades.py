@@ -4,7 +4,8 @@ import re
 
 def validate_trades(xml_file, xslt_file, txt_output, html_output):
     # Ensure output directory exists
-    os.makedirs(os.path.dirname(txt_output), exist_ok=True)
+    output_dir = 'output'
+    os.makedirs(output_dir, exist_ok=True)
     
     tree = etree.parse(xml_file)
     root = tree.getroot()
