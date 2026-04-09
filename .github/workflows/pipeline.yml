@@ -1,4 +1,4 @@
-name: Trade validation pipeline
+name: Automated Trade Validation Pipeline
 
 on: 
   push:
@@ -16,18 +16,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+    - name: Build Validation Image
+        run: docker build -t trade-validator .
+    
+    - name: Run Validation (Generate Text Report)
+        run: |
+          docker run --name validator-container trade-validator
+          docker cp validator-container:/app/output/validation.txt ./output/validation.txt
 
-    - name: Run Python Validation Script
-      run: python validate_trades.py
-
-    - name: Upload Output Artifacts
+    - name: Upload Reports
         uses: actions/upload-artifact@v4
         with:
-          name: trade-reports
+          name: validation-reports
           path: output/
           retention-days: 7
 
