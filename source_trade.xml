@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trades>
+  <trade>
+    <trade_id>T12345</trade_id>
+    <trader>
+      <id>TRD1</id>
+      <name></name>
+    </trader>
+    <instrument>
+      <symbol>DBK.DE</symbol>
+      <name>Deutsche Bank AG</name>
+      <type>Equity</type>
+    </instrument>
+    <transaction_details>
+      <type>Buy</type>
+      <quantity>1000</quantity>
+      <price>15.50</price>
+      <currency>EUR</currency>
+      <timestamp>2023-10-27T10:00:00Z</timestamp>
+    </transaction_details>
+  </trade>
+  <trade>
+    <trade_id>T12346</trade_id>
+    <trader>
+      <id>TRD2</id>
+      <name>Jane Smith</name>
+    </trader>
+    <instrument>
+      <symbol>AAPL</symbol>
+      <name>Apple Inc.</name>
+      <type>Equity</type>
+    </instrument>
+    <transaction_details>
+      <type>Sell</type>
+      <quantity>   </quantity>
+      <price>170.25</price>
+      <currency>USD</currency>
+      <timestamp>2023-10-27T10:05:00Z</timestamp>
+    </transaction_details>
+  </trade>
+  <trade>
+    <trade_id>T12347</trade_id>
+    <trader>
+      <id>TRD1</id>
+      <name>John Doe</name>
+    </trader>
+    <instrument>
+      <symbol>GOOGL</symbol>
+      <name>Alphabet Inc.</name>
+      <type>Equity</type>
+    </instrument>
+    <transaction_details>
+      <type>Buy</type>
+      <quantity>200</quantity>
+      <price>135.70</price>
+      <currency>USD</currency>
+      <timestamp>2023-10-27T10:10:00Z</timestamp>
+    </transaction_details>
+  </trade>
+</trades>
