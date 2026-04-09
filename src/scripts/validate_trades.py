@@ -25,12 +25,16 @@ def validate_trades(xml_file, output_file):
             
             # Validate Name should be alphabetic and spaces allowed 
             name_clean = name.strip()
-            if not re.match(r'^[A-Za-z\s]+$', name_clean):
+            if not name_clean:
+                errors.append("Trader Name is missing")
+            elif not re.match(r'^[A-Za-z\s]+$', name_clean):
                 errors.append(f"Trader Name '{name_clean}' contains non-alphabet characters.")
                 
             # Validate Instrument should be alphabetic, spaces and dots allowed
             instrument_clean = instrument.strip()
-            if not re.match(r'^[A-Za-z\s\.]+$', instrument_clean):
+            if not instrument_clean:
+                errors.append("Instrument Name is missing")
+            elif not re.match(r'^[A-Za-z\s\.]+$', instrument_clean):
                 errors.append(f"Instrument Name '{instrument_clean}' contains non-alphabet characters.")
                 
             # Validate Quantity (<= 1000)
