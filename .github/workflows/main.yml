@@ -26,7 +26,7 @@ jobs:
         docker cp validator-container:/app/output/validation.txt ./output/validation.txt
 
     - name: Upload Reports
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: validation-reports
         path: output/
