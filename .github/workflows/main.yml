@@ -24,6 +24,7 @@ jobs:
       run: |
         docker run --name validator-container trade-validator
         docker cp validator-container:/app/output/validation.txt ./output/validation.txt
+        docker cp validator-container:/app/output/report.html ./output/report.html
 
     - name: Upload Reports
       uses: actions/upload-artifact@v6

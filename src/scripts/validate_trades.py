@@ -1,15 +1,16 @@
-import xml.etree.ElementTree as ET
+from lxml import etree
 import os
 import re
 
-def validate_trades(xml_file, output_file):
+def validate_trades(xml_file, xslt_file, txt_output, html_output):
     # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    output_dir = 'output'
+    os.makedirs(output_dir, exist_ok=True)
     
-    tree = ET.parse(xml_file)
+    tree = etree.parse(xml_file)
     root = tree.getroot()
     
-    with open(output_file, 'w') as f:
+    with open(txt_output, 'w') as f:
         for trade in root.findall('trade'):
             # Check if any field is empty and handle it gracefully
             trade_id = trade.find('trade_id').text or ""
@@ -53,8 +54,27 @@ def validate_trades(xml_file, output_file):
                 f.write("\n")
             else:
                 f.write(f"Trade {trade_id}: Passed validation.\n\n")
-                
         f.write("Validation process completed.\n")
+    print(f"Validation report generated at: {txt_output}")
+            
+    # XSLT TRANSFORMATION LOGIC
+    try:
+        xslt_tree = etree.parse(xslt_file)
+        transform = etree.XSLT(xslt_tree)
+        # Apply transformation to the XML tree
+        result_tree = transform(tree)
+        
+        # Save HTML report
+        with open(html_output, 'wb') as html_f:
+            html_f.write(etree.tostring(result_tree, pretty_print=True, method="html"))
+        print(f"HTML report generated at: {html_output}")
+    except Exception as e:
+        print(f"Error during XSLT transformation: {e}")
 
 if __name__ == "__main__":
-    validate_trades('source_trade.xml', 'output/validation.txt')
+    input_xml = 'source_trade.xml'
+    input_xslt = 'source_trade.xslt'
+    output_txt = 'output/validation.txt'
+    output_html = 'output/report.html'
+    
+    validate_trades(input_xml, input_xslt, output_txt, output_html)
