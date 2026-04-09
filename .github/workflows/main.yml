@@ -20,7 +20,7 @@ jobs:
     - name: Build Validation Image
       run: docker build -t trade-validator .
     
-    - name: Run Validation (Generate Text Report)
+    - name: Run Validation (Generate Text and HTML Report)
       run: |
         docker run --name validator-container trade-validator
         docker cp validator-container:/app/output/validation.txt ./output/validation.txt
