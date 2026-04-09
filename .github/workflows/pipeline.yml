@@ -1,0 +1,33 @@
+name: Trade validation pipeline
+
+on: 
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+jobs:
+  build_validate_report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Run Python Validation Script
+      run: python validate_trades.py
+
+    - name: Upload Output Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: trade-reports
+          path: output/
+          retention-days: 7
+
