@@ -1,8 +1,9 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 WORKDIR /app
 # Copy only necessary files
-COPY src/scripts/validate_trades.py .
-COPY source_trade.xml .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 # Create output directory
 RUN mkdir output
 # Run validation script
