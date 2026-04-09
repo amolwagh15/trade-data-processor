@@ -1,0 +1,34 @@
+name: Automated Trade Validation Pipeline
+
+on: 
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_validate_report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Build Validation Image
+      run: docker build -t trade-validator .
+    
+    - name: Run Validation (Generate Text Report)
+      run: |
+        docker run --name validator-container trade-validator
+        docker cp validator-container:/app/output/validation.txt ./output/validation.txt
+
+    - name: Upload Reports
+      uses: actions/upload-artifact@v6
+      with:
+        name: validation-reports
+        path: output/
+        retention-days: 7
+
