@@ -25,9 +25,9 @@ jobs:
         docker cp validator-container:/app/output/validation.txt ./output/validation.txt
 
     - name: Upload Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: validation-reports
-          path: output/
-          retention-days: 7
+      uses: actions/upload-artifact@v4
+      with:
+        name: validation-reports
+        path: output/
+        retention-days: 7
 
