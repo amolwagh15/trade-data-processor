@@ -20,7 +20,7 @@ jobs:
 
     - name: Run Validation Script
       run: |
-        python3 src/scripts/validate_trade.py
+        python3 src/scripts/validate_trades.py
 
     - name: Upload Reports
       uses: actions/upload-artifact@v6
