@@ -8,23 +8,16 @@ Design Choices
 
 Python (lxml): Used for its high performance and native support for XSLT transformations.
 
-Docker: Ensures "it works on my machine" consistency by encapsulating the runtime and dependencies (like lxml C-libraries).
 
 GitHub Actions: Acts as the orchestrator to automatically verify data integrity on every code change or data update.
 
 Prerequisites
-Docker Desktop (to run locally).
 
 Git (for version control).
 
 How to Run
 Clone the Repo: git clone https://github.com/amolwagh15/trade-data-processor.git
 
-Build & Run Locally:
-
-Bash
-docker build -t trade-validator .
-docker run --rm -v $(pwd)/output:/app/output trade-validator
 View Results: Open the output/ directory for validation.txt and report.html.
 
 Assumptions & Limitations

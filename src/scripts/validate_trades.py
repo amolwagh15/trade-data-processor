@@ -1,44 +1,50 @@
-from lxml import etree
+import xml.etree.ElementTree as ET
 import os
 import re
 
 def validate_trades(xml_file, xslt_file, txt_output, html_output):
-    # Ensure output directory exists
     output_dir = 'output'
     os.makedirs(output_dir, exist_ok=True)
     
-    tree = etree.parse(xml_file)
-    root = tree.getroot()
+    try:
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+    except Exception as e:
+        print(f"Error parsing XML: {e}")
+        return
+
+    validation_results = []
     
     with open(txt_output, 'w') as f:
         for trade in root.findall('trade'):
-            # Check if any field is empty and handle it gracefully
-            trade_id = trade.find('trade_id').text or ""
-            name = trade.find('trader/name').text or ""
-            instrument = trade.find('instrument/name').text or ""
-            quantity_str = trade.find('transaction_details/quantity').text or ""
+            trade_id = (trade.find('trade_id').text if trade.find('trade_id') is not None else "") or ""
+            
+            trader_node = trade.find('trader')
+            name = (trader_node.find('name').text if trader_node is not None else "") or ""
+            
+            inst_node = trade.find('instrument')
+            instrument = (inst_node.find('name').text if inst_node is not None else "") or ""
+            
+            details_node = trade.find('transaction_details')
+            quantity_str = (details_node.find('quantity').text if details_node is not None else "") or ""
             
             errors = []
             
-            # Validate Trade ID if its alphanumeric 
             if not trade_id.isalnum():
                 errors.append(f"Trade ID '{trade_id}' is not alphanumeric.")
             
-            # Validate Name should be alphabetic and spaces allowed 
             name_clean = name.strip()
             if not name_clean:
                 errors.append("Trader Name is missing")
             elif not re.match(r'^[A-Za-z\s]+$', name_clean):
                 errors.append(f"Trader Name '{name_clean}' contains non-alphabet characters.")
                 
-            # Validate Instrument should be alphabetic, spaces and dots allowed
             instrument_clean = instrument.strip()
             if not instrument_clean:
                 errors.append("Instrument Name is missing")
             elif not re.match(r'^[A-Za-z\s\.]+$', instrument_clean):
                 errors.append(f"Instrument Name '{instrument_clean}' contains non-alphabet characters.")
                 
-            # Validate Quantity (<= 1000)
             try:
                 qty = float(quantity_str.strip())
                 if qty > 1000:
@@ -46,7 +52,9 @@ def validate_trades(xml_file, xslt_file, txt_output, html_output):
             except ValueError:
                 errors.append(f"Quantity '{quantity_str}' is empty or not a valid number.")
                 
-            # Log results
+            status = "FAILED" if errors else "PASSED"
+            validation_results.append({"id": trade_id, "status": status, "errors": errors})
+
             if errors:
                 f.write(f"Validation errors for Trade {trade_id}:\n")
                 for error in errors:
@@ -54,22 +62,31 @@ def validate_trades(xml_file, xslt_file, txt_output, html_output):
                 f.write("\n")
             else:
                 f.write(f"Trade {trade_id}: Passed validation.\n\n")
+
         f.write("Validation process completed.\n")
     print(f"Validation report generated at: {txt_output}")
-            
-    # XSLT TRANSFORMATION LOGIC
+
     try:
-        xslt_tree = etree.parse(xslt_file)
-        transform = etree.XSLT(xslt_tree)
-        # Apply transformation to the XML tree
-        result_tree = transform(tree)
+        html_content = """
+        <html>
+        <head><title>Trade Validation Report</title></head>
+        <body>
+            <h1>Trade Validation Summary</h1>
+            <table border="1">
+                <tr><th>Trade ID</th><th>Status</th><th>Issues</th></tr>
+        """
+        for res in validation_results:
+            err_msg = ", ".join(res['errors']) if res['errors'] else "None"
+            color = "red" if res['status'] == "FAILED" else "green"
+            html_content += f"<tr><td>{res['id']}</td><td style='color:{color}'>{res['status']}</td><td>{err_msg}</td></tr>"
         
-        # Save HTML report
-        with open(html_output, 'wb') as html_f:
-            html_f.write(etree.tostring(result_tree, pretty_print=True, method="html"))
+        html_content += "</table></body></html>"
+        
+        with open(html_output, 'w') as html_f:
+            html_f.write(html_content)
         print(f"HTML report generated at: {html_output}")
     except Exception as e:
-        print(f"Error during XSLT transformation: {e}")
+        print(f"Error generating HTML report: {e}")
 
 if __name__ == "__main__":
     input_xml = 'source_trade.xml'
