@@ -17,14 +17,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v5
 
-    - name: Build Validation Image
-      run: docker build -t trade-validator .
-    
-    - name: Run Validation (Generate Text and HTML Report)
+    - name: Run Validation Script
       run: |
-        docker run --name validator-container trade-validator
-        docker cp validator-container:/app/output/validation.txt ./output/validation.txt
-        docker cp validator-container:/app/output/report.html ./output/report.html
+        python3 src/scripts/validate_trade.py
 
     - name: Upload Reports
       uses: actions/upload-artifact@v6
